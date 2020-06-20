@@ -20,6 +20,13 @@ export const teams = [
     name: 'Franchise Managers',
     members: [],
   },
+  {
+    id: 'UNGROUPED',
+    thumbnail:
+      'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80',
+    name: 'UNGROUPED',
+    members: [],
+  },
 ];
 
 export const users = [

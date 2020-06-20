@@ -56,6 +56,13 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
   },
+  selectedIcon: {
+    position: 'absolute',
+    right: 2,
+    bottom: 0,
+    width: 15,
+    height: 15,
+  },
 });
 
 function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
@@ -65,17 +72,23 @@ function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
       onPress={isGroup ? () => null : () => handleUpdate()}
       activeOpacity={isGroup ? 1 : 0.8}
       style={styles.listItem}>
-      <Image
-        style={styles.avatar}
-        source={{
-          uri: data.thumbnail,
-        }}
-      />
+      <View>
+        <Image
+          style={styles.avatar}
+          source={{
+            uri: data.thumbnail,
+          }}
+        />
+        {data.selected && (
+          <Image
+            source={require('../assets/selected.png')}
+            style={styles.selectedIcon}
+          />
+        )}
+      </View>
       <View style={styles.textContent}>
         <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.subtitle}>
-          {subtitle} {`${data.selected ? 'SELECTED' : ''}`}
-        </Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
       {isGroup && (
         <TouchableOpacity

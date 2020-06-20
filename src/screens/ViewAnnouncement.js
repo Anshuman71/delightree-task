@@ -29,30 +29,50 @@ function keyExtractor(item) {
 }
 
 function ViewAnnouncement({route, navigation}) {
-  function renderItem({item, index}) {
-    if (item.members && item.members.length) {
+  const renderItem = ({item, index}) => {
+    const {teamMemberMap} = route.params;
+    const members =
+      item.members &&
+      teamMemberMap[item.id] &&
+      Object.values(teamMemberMap[item.id]);
+
+    if (item.id === 'UNGROUPED') {
       return (
-        <ExpandableGroup main={item}>
+        <FlatList
+          keyExtractor={keyExtractor}
+          data={members}
+          renderItem={renderItem}
+        />
+      );
+    }
+
+    if (members && members.length) {
+      return (
+        <ExpandableGroup main={{...item, members}}>
           <FlatList
             keyExtractor={keyExtractor}
-            data={item.members}
+            data={members}
             renderItem={renderItem}
           />
         </ExpandableGroup>
       );
     }
-    return <ListItem data={item} handleUpdate={() => null} />;
-  }
+    if (item.role) {
+      return <ListItem data={item} handleUpdate={() => null} />;
+    }
+    return null;
+  };
+
   return (
     <View style={{flex: 1}}>
       <Header
         title={route.params.title}
-        subtitle={`${route.params.data.length} members`}
+        subtitle={`${route.params.selectedCount} members`}
       />
       <View style={{flex: 1, padding: 24, paddingBottom: 0}}>
         <FlatList
           keyExtractor={keyExtractor}
-          data={route.params.data}
+          data={Object.values(route.params.teamMap)}
           renderItem={renderItem}
         />
       </View>

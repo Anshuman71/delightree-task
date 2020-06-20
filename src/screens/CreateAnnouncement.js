@@ -46,44 +46,58 @@ const styles = StyleSheet.create({
 });
 
 function keyExtractor(item) {
-  return `${item.id}${item.name}${item.groupId}`;
+  return `${item.id}`;
 }
 
 function CreateAnnouncement({route, navigation}) {
-  const [data, setData] = useState([]);
-  console.log('CreateAnnouncement -> data', data);
-  // console.log('CreateAnnouncement -> data', data);
+  const [teamMap, setTeamMap] = useState({});
+  const [teamMemberMap, setTeamMemberMap] = useState({});
+  const [selectedCount, setSelectedCount] = useState(0);
+
   const [filteredData, setFilteredData] = useState([]);
   const [memberName, setMemberName] = useState('');
   const [announcementName, setAnnouncementName] = useState('');
   const [canProceed, setProceed] = useState(false);
 
   useEffect(() => {
-    const newGroups = [...teams];
-    const nonMembers = [];
+    const tMap = {UNGROUPED: {}};
+    const members = {};
     users.forEach(user => {
       const {teamIds} = user;
-      if (teamIds && Array.isArray(teamIds)) {
-        teamIds.forEach(id => {
-          const groupIndex = newGroups.findIndex(item => item.id === id);
-          newGroups[groupIndex].members.push({...user, groupId: id});
+      if (teamIds) {
+        teamIds.forEach(teamId => {
+          if (tMap[teamId]) {
+            tMap[teamId] = {...tMap[teamId], [user.id]: user};
+          } else {
+            tMap[teamId] = {[user.id]: user};
+          }
         });
       } else {
-        nonMembers.push(user);
+        tMap.UNGROUPED = {...tMap.UNGROUPED, [user.id]: user};
       }
+
+      members[user.id] = user;
     });
-    setData([...newGroups, ...nonMembers]);
+
+    const map = {};
+    teams.forEach(team => {
+      map[team.id] = {...team};
+    });
+
+    console.log({map, tMap});
+    setTeamMemberMap(tMap);
+    setTeamMap(map);
   }, []);
 
   useEffect(() => {
-    setProceed(announcementName.length && true);
-  }, [announcementName]);
+    setProceed(announcementName.length && selectedCount);
+  }, [announcementName, selectedCount]);
 
   function handleAnnouncementNameChange(val) {
     setAnnouncementName(val);
   }
 
-  function handleFilter(val) {
+  const handleFilter = val => {
     const query = val && val.toLowerCase();
     if (query) {
       setMemberName(query);
@@ -96,78 +110,106 @@ function CreateAnnouncement({route, navigation}) {
       setMemberName('');
       setFilteredData([]);
     }
-  }
-
-  function onClear() {
-    setMemberName('');
-    setFilteredData([]);
-  }
-
-  const handleUpdate = ({index, value}) => {
-    if (value.members && value.members.length) {
-      return;
-    }
-
-    if (value.teamIds && value.teamIds.length) {
-      const map = {};
-      // let isSelected = null;
-
-      value.teamIds.forEach(teamId => {
-        // console.log('handleUpdate -> teamId', teamId);
-        const newTeamValue = {
-          ...data[teamId - 1],
-          members: data[teamId - 1].members.map(member => {
-            if (member.id === value.id) {
-              return {...member, selected: !member.selected};
-            }
-            return {...member};
-          }),
-        };
-        map[teamId - 1] = newTeamValue;
-      });
-      // map.forEach(item => {
-      //   const [idx, group] = item;
-
-      //   setData([...data.slice(0, idx), group, ...data.slice(idx + 1)]);
-      // });
-      const mapKeys = Object.keys(map);
-      let newDataValue = data.map((item, idx) => {
-        if (mapKeys.includes(idx.toString())) {
-          return map[idx];
-        }
-
-        return item;
-      });
-
-      setData(newDataValue);
-      console.log('handleUpdate -> newDataValue', newDataValue);
-
-      return;
-    }
-
-    const newValue = {...value, selected: !value.selected};
-    setData([...data.slice(0, index), newValue, ...data.slice(index + 1)]);
   };
 
-  function renderItem({item, index}) {
-    if (item.members && item.members.length) {
+  const onClear = () => {
+    setMemberName('');
+    setFilteredData([]);
+  };
+
+  const toggleSelect = ({member}) => {
+    const newTeamMemberMap = {...teamMemberMap};
+    if (member.teamIds) {
+      member.teamIds.forEach(id => {
+        newTeamMemberMap[id] = {
+          ...newTeamMemberMap[id],
+          [member.id]: {
+            ...member,
+            selected: !member.selected,
+          },
+        };
+      });
+    } else {
+      newTeamMemberMap.UNGROUPED = {
+        ...newTeamMemberMap.UNGROUPED,
+        [member.id]: {
+          ...member,
+          selected: !member.selected,
+        },
+      };
+    }
+    setTeamMemberMap(newTeamMemberMap);
+    // Update count
+    setSelectedCount(member.selected ? selectedCount - 1 : selectedCount + 1);
+  };
+
+  const renderItem = ({item, index}) => {
+    const members =
+      item.members &&
+      teamMemberMap[item.id] &&
+      Object.values(teamMemberMap[item.id]);
+
+    if (item.id === 'UNGROUPED') {
       return (
-        <ExpandableGroup main={item}>
+        <FlatList
+          keyExtractor={keyExtractor}
+          data={members}
+          renderItem={renderItem}
+        />
+      );
+    }
+
+    if (members && members.length) {
+      return (
+        <ExpandableGroup main={{...item, members}}>
           <FlatList
             keyExtractor={keyExtractor}
-            data={item.members}
+            data={members}
             renderItem={renderItem}
           />
         </ExpandableGroup>
       );
     }
     return (
+      <ListItem data={item} handleUpdate={() => toggleSelect({member: item})} />
+    );
+  };
+
+  const renderUserItem = ({item: user}) => {
+    console.log('user', user);
+    const {teamIds} = user;
+    const member = teamMemberMap[teamIds ? teamIds[0] : 'UNGROUPED'][user.id];
+    console.log('member', member);
+
+    return (
       <ListItem
-        data={item}
-        handleUpdate={() => handleUpdate({index, value: item})}
+        data={member}
+        handleUpdate={() => toggleSelect({member: member})}
       />
     );
-  }
+  };
+
+  const handleNext = () => {
+    const selectedTeamMemberMap = {};
+
+    Object.keys(teamMemberMap).forEach(teamId => {
+      selectedTeamMemberMap[teamId] = {};
+
+      const membersMap = teamMemberMap[teamId];
+      Object.values(membersMap).forEach(member => {
+        if (member.selected) {
+          selectedTeamMemberMap[teamId][member.id] = {...member};
+        }
+      });
+    });
+
+    navigation.navigate('ViewTask', {
+      title: announcementName,
+      teamMemberMap: selectedTeamMemberMap,
+      teamMap: teamMap,
+      selectedCount: selectedCount,
+    });
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -196,14 +238,14 @@ function CreateAnnouncement({route, navigation}) {
             </TouchableOpacity>
           )}
         </View>
-        <Text style={styles.selectedCount}>31/1000</Text>
+        <Text style={styles.selectedCount}>{selectedCount}/1000</Text>
         <View style={styles.listContainer}>
           {memberName ? (
             filteredData.length ? (
               <FlatList
                 keyExtractor={keyExtractor}
                 data={filteredData}
-                renderItem={renderItem}
+                renderItem={renderUserItem}
               />
             ) : (
               <Text>Looks like there is no member with that name</Text>
@@ -211,18 +253,13 @@ function CreateAnnouncement({route, navigation}) {
           ) : (
             <FlatList
               keyExtractor={keyExtractor}
-              data={data}
+              data={Object.values(teamMap)}
               renderItem={renderItem}
             />
           )}
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ViewTask', {
-              title: announcementName,
-              data: data,
-            })
-          }
+          onPress={handleNext}
           activeOpacity={0.8}
           disabled={!canProceed}
           style={{
