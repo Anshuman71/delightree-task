@@ -51,7 +51,8 @@ function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
   const subtitle = data.role || `${data.members.length} Members`;
   return (
     <TouchableOpacity
-      onPress={isGroup ? () => null : handleUpdate}
+      onPress={isGroup ? () => null : () => handleUpdate()}
+      activeOpacity={isGroup ? 1 : 0.8}
       style={styles.listItem}>
       <Image
         style={styles.avatar}
