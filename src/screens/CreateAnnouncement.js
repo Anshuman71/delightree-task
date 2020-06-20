@@ -11,6 +11,7 @@ import {theme, deviceHeight} from '../utils/constants';
 import commonStyles from '../utils/styles';
 import ListItem from '../components/ListItem';
 import ExpandableGroup from '../components/ExpansionGroup';
+import Header from '../components/Header';
 import {users, teams} from '../utils/source';
 
 const styles = StyleSheet.create({
@@ -36,7 +37,7 @@ function keyExtractor(item) {
   return `${item.id}${item.name}`;
 }
 
-function CreateAnnouncement() {
+function CreateAnnouncement({route}) {
   const [data, setData] = useState([]);
   // console.log('CreateAnnouncement -> data', data);
   const [filteredData, setFilteredData] = useState([]);
@@ -97,15 +98,11 @@ function CreateAnnouncement() {
           ...data[teamId - 1],
           members: data[teamId - 1].members.map(member => {
             if (member.id === value.id) {
-              console.log('handleUpdate -> member', member);
-              console.log('handleUpdate -> member.selected', member.selected);
-
               return {...member, selected: !member.selected};
             }
             return {...member};
           }),
         };
-        console.log('handleUpdate -> newTeamValue', newTeamValue);
         map[teamId - 1] = newTeamValue;
       });
       // map.forEach(item => {
@@ -114,13 +111,8 @@ function CreateAnnouncement() {
       //   setData([...data.slice(0, idx), group, ...data.slice(idx + 1)]);
       // });
       const mapKeys = Object.keys(map);
-      console.log('handleUpdate -> mapKeys', mapKeys);
       let newDataValue = data.map((item, idx) => {
-        console.log('handleUpdate -> idx', idx);
-
         if (mapKeys.includes(idx.toString())) {
-          console.log('handleUpdate -> map[idx]', map[idx]);
-          console.log('handleUpdate -> item', item);
           return map[idx];
         }
 
@@ -158,28 +150,31 @@ function CreateAnnouncement() {
   }
 
   return (
-    <View style={{flex: 1, padding: 24, paddingBottom: 0}}>
-      <TextInput
-        placeholderTextColor={theme.grey}
-        placeholder="Announcement Name"
-        onChangeText={handleAnnouncementNameChange}
-        style={commonStyles.inputBox}
-      />
-      <TextInput
-        placeholderTextColor={theme.grey}
-        placeholder="Add people"
-        onChangeText={handleFilter}
-        style={{...commonStyles.inputBox, marginTop: 24}}
-      />
-      <Text style={styles.selectedCount}>31/1000</Text>
-      <FlatList
-        keyExtractor={keyExtractor}
-        data={filteredData.length ? filteredData : data}
-        renderItem={renderItem}
-      />
-      <TouchableOpacity activeOpacity={0.8} style={styles.button}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+    <View style={{flex: 1}}>
+      <Header title={route.name} />
+      <View style={{flex: 1, padding: 24, paddingBottom: 0}}>
+        <TextInput
+          placeholderTextColor={theme.grey}
+          placeholder="Announcement Name"
+          onChangeText={handleAnnouncementNameChange}
+          style={commonStyles.inputBox}
+        />
+        <TextInput
+          placeholderTextColor={theme.grey}
+          placeholder="Add people"
+          onChangeText={handleFilter}
+          style={{...commonStyles.inputBox, marginTop: 24}}
+        />
+        <Text style={styles.selectedCount}>31/1000</Text>
+        <FlatList
+          keyExtractor={keyExtractor}
+          data={filteredData.length ? filteredData : data}
+          renderItem={renderItem}
+        />
+        <TouchableOpacity activeOpacity={0.8} style={styles.button}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

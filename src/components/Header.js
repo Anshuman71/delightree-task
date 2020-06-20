@@ -1,10 +1,11 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import {theme} from '../utils/constants';
+import {theme, deviceWidth} from '../utils/constants';
 
 const styles = StyleSheet.create({
   header: {
     height: 60,
+    width: deviceWidth,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -36,10 +37,12 @@ function Header({title, subtitle}) {
           style={{fontSize: 20, fontWeight: '700', color: theme.background}}>
           {title}
         </Text>
-        <Text
-          style={{fontSize: 16, fontWeight: '500', color: theme.background}}>
-          {subtitle}
-        </Text>
+        {subtitle && (
+          <Text
+            style={{fontSize: 16, fontWeight: '500', color: theme.background}}>
+            {subtitle}
+          </Text>
+        )}
       </View>
       <TouchableOpacity style={styles.button}>
         <Image style={styles.icon} source={require('../assets/more.png')} />
