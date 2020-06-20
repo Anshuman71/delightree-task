@@ -4,10 +4,11 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  Image,
   StyleSheet,
   Text,
 } from 'react-native';
-import {theme, deviceHeight} from '../utils/constants';
+import {theme} from '../utils/constants';
 import commonStyles from '../utils/styles';
 import ListItem from '../components/ListItem';
 import ExpandableGroup from '../components/ExpansionGroup';
@@ -31,18 +32,30 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   buttonText: {fontSize: 20, color: theme.background},
+  clearInput: {
+    width: 30,
+    height: 30,
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  clearIcon: {height: 24, width: 24},
+  listContainer: {flex: 1},
+  container: {flex: 1, padding: 24, paddingBottom: 0},
+  memberInputContainer: {marginTop: 24},
 });
 
 function keyExtractor(item) {
-  return `${item.id}${item.name}`;
+  return `${item.id}${item.name}${item.groupId}`;
 }
 
 function CreateAnnouncement({route, navigation}) {
   const [data, setData] = useState([]);
+  console.log('CreateAnnouncement -> data', data);
   // console.log('CreateAnnouncement -> data', data);
   const [filteredData, setFilteredData] = useState([]);
+  const [memberName, setMemberName] = useState('');
   const [announcementName, setAnnouncementName] = useState('');
-  const [selectedUsers, setSelectedUsers] = useState([]);
   const [canProceed, setProceed] = useState(false);
 
   useEffect(() => {
@@ -53,7 +66,7 @@ function CreateAnnouncement({route, navigation}) {
       if (teamIds && Array.isArray(teamIds)) {
         teamIds.forEach(id => {
           const groupIndex = newGroups.findIndex(item => item.id === id);
-          newGroups[groupIndex].members.push(user);
+          newGroups[groupIndex].members.push({...user, groupId: id});
         });
       } else {
         nonMembers.push(user);
@@ -73,14 +86,21 @@ function CreateAnnouncement({route, navigation}) {
   function handleFilter(val) {
     const query = val && val.toLowerCase();
     if (query) {
+      setMemberName(query);
       setFilteredData(
         users.filter(
           item => item.name && item.name.toLowerCase().includes(query),
         ),
       );
     } else {
+      setMemberName('');
       setFilteredData([]);
     }
+  }
+
+  function onClear() {
+    setMemberName('');
+    setFilteredData([]);
   }
 
   const handleUpdate = ({index, value}) => {
@@ -152,25 +172,50 @@ function CreateAnnouncement({route, navigation}) {
   return (
     <View style={{flex: 1}}>
       <Header title={route.name} />
-      <View style={{flex: 1, padding: 24, paddingBottom: 0}}>
+      <View style={styles.container}>
         <TextInput
           placeholderTextColor={theme.grey}
           placeholder="Announcement Name"
           onChangeText={handleAnnouncementNameChange}
           style={commonStyles.inputBox}
         />
-        <TextInput
-          placeholderTextColor={theme.grey}
-          placeholder="Add people"
-          onChangeText={handleFilter}
-          style={{...commonStyles.inputBox, marginTop: 24}}
-        />
+        <View style={styles.memberInputContainer}>
+          <TextInput
+            placeholderTextColor={theme.grey}
+            placeholder="Add people"
+            value={memberName}
+            onChangeText={handleFilter}
+            style={{...commonStyles.inputBox}}
+          />
+          {!!memberName && (
+            <TouchableOpacity onPress={onClear} style={styles.clearInput}>
+              <Image
+                style={styles.clearIcon}
+                source={require('../assets/clear.png')}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
         <Text style={styles.selectedCount}>31/1000</Text>
-        <FlatList
-          keyExtractor={keyExtractor}
-          data={filteredData.length ? filteredData : data}
-          renderItem={renderItem}
-        />
+        <View style={styles.listContainer}>
+          {memberName ? (
+            filteredData.length ? (
+              <FlatList
+                keyExtractor={keyExtractor}
+                data={filteredData}
+                renderItem={renderItem}
+              />
+            ) : (
+              <Text>Looks like there is no member with that name</Text>
+            )
+          ) : (
+            <FlatList
+              keyExtractor={keyExtractor}
+              data={data}
+              renderItem={renderItem}
+            />
+          )}
+        </View>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ViewTask', {
@@ -179,7 +224,11 @@ function CreateAnnouncement({route, navigation}) {
             })
           }
           activeOpacity={0.8}
-          style={styles.button}>
+          disabled={!canProceed}
+          style={{
+            ...styles.button,
+            backgroundColor: canProceed ? theme.primary : theme.grey,
+          }}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </View>
