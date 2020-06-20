@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React from 'react';
 
 import {View, Image, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {deviceWidth, theme} from '../utils/constants';
@@ -46,19 +46,20 @@ const styles = StyleSheet.create({
   },
 });
 
-function ListItem({isGroup, onExpand, isOpen}) {
+function ListItem({data, isGroup, onExpand, isOpen}) {
+  console.log('ListItem -> isOpen', isOpen, data.name);
+  const subtitle = data.role || `${data.members.length} Members`;
   return (
-    <View style={styles.listItem}>
+    <TouchableOpacity style={styles.listItem}>
       <Image
         style={styles.avatar}
         source={{
-          uri:
-            'https://images.unsplash.com/photo-1588774210246-a1dc467758df?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80',
+          uri: data.thumbnail,
         }}
       />
       <View style={styles.textContent}>
-        <Text style={styles.title}>Title</Text>
-        <Text style={styles.subtitle}>Subtitle</Text>
+        <Text style={styles.title}>{data.name}</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
       {isGroup && (
         <TouchableOpacity
@@ -68,12 +69,12 @@ function ListItem({isGroup, onExpand, isOpen}) {
           <View
             style={{
               ...styles.downArrow,
-              transform: [{rotate: isOpen ? '-180deg' : '180deg'}],
+              transform: isOpen ? [{rotate: '180deg'}] : [{rotate: '360deg'}],
             }}
           />
         </TouchableOpacity>
       )}
-    </View>
+    </TouchableOpacity>
   );
 }
 

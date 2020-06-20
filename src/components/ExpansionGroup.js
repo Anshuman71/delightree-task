@@ -7,7 +7,7 @@ import ListItem from './ListItem';
 
 const DEFAULT_HEIGHT = 60;
 
-function ExpandableGroup({children}) {
+function ExpandableGroup({children, main}) {
   const [expandedHeight, setExpandedHeight] = useState(DEFAULT_HEIGHT);
   const [minHeight, setMinHeight] = useState('auto');
   const [isOpen, setIsOpen] = useState(0);
@@ -30,7 +30,12 @@ function ExpandableGroup({children}) {
         height: isOpen ? expandedHeight : minHeight,
         overflow: 'hidden',
       }}>
-      <ListItem onExpand={() => setIsOpen(!isOpen)} isGroup isOpen={isOpen} />
+      <ListItem
+        data={main}
+        onExpand={() => setIsOpen(!isOpen)}
+        isGroup
+        isOpen={isOpen}
+      />
       <View
         style={{
           paddingLeft: deviceWidth * 0.1 + 10,
