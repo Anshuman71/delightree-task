@@ -1,0 +1,182 @@
+const teams = [
+  {
+    id: 1,
+    name: 'Operations Team',
+    numberOfMembers: 0,
+  },
+  {
+    id: 2,
+    name: 'Marketing Team',
+    numberOfMembers: 0,
+  },
+  {
+    id: 3,
+    name: 'Franchise Managers',
+    numberOfMembers: 0,
+  },
+];
+
+const users = [
+  {
+    id: 1,
+    name: 'Uma Myers',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/51.jpg',
+    teamIds: null,
+  },
+  {
+    id: 2,
+    name: 'Imogen Gardner',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/52.jpg',
+    teamIds: null,
+  },
+  {
+    id: 3,
+    name: 'Aayat Burke',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/53.jpg',
+    teamIds: null,
+  },
+  {
+    id: 4,
+    name: 'Aminah Mckenzie',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/54.jpg',
+    teamIds: null,
+  },
+  {
+    id: 5,
+    name: 'Carmel Pham',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/55.jpg',
+    teamIds: null,
+  },
+  {
+    id: 6,
+    name: 'Jocelyn Graves',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/56.jpg',
+    teamIds: null,
+  },
+  {
+    id: 7,
+    name: 'Walter Craf',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/57.jpg',
+    teamIds: null,
+  },
+  {
+    id: 8,
+    name: 'Mandy Workman',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/58.jpg',
+    teamIds: [1],
+  },
+  {
+    id: 9,
+    name: 'Lubna Silva',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/59.jpg',
+    teamIds: [1, 3],
+  },
+  {
+    id: 10,
+    name: 'Chardonnay Nguyen',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/60.jpg',
+    teamIds: [1],
+  },
+  {
+    id: 12,
+    name: 'Zaine Boone',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/62.jpg',
+    teamIds: [1],
+  },
+  {
+    id: 13,
+    name: 'Alysha Clemons',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/63.jpg',
+    teamIds: [1, 2],
+  },
+  {
+    id: 14,
+    name: 'Connor Huffman',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/64.jpg',
+    teamIds: [1, 2],
+  },
+  {
+    id: 15,
+    name: 'Ivor Lopez',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/65.jpg',
+    teamIds: [1, 3],
+  },
+  {
+    id: 16,
+    name: 'Raveena Mcclain',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/66.jpg',
+    teamIds: [1, 2, 3],
+  },
+  {
+    id: 17,
+    name: 'Subhaan Ashton',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/67.jpg',
+    teamIds: [2],
+  },
+  {
+    id: 18,
+    name: 'Jovan Jeffery',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/68.jpg',
+    teamIds: [2, 3],
+  },
+  {
+    id: 19,
+    name: 'Jasleen Davenport',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/69.jpg',
+    teamIds: [2],
+  },
+  {
+    id: 20,
+    name: 'Cecilia Holden',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/71.jpg',
+    teamIds: [2],
+  },
+  {
+    id: 21,
+    name: 'Yasmine Gough',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/72.jpg',
+    teamIds: [2],
+  },
+  {
+    id: 22,
+    name: 'Findlay Needham',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/73.jpg',
+    teamIds: [2],
+  },
+  {
+    id: 23,
+    name: 'Jaheim Wolf',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/74.jpg',
+    teamIds: [2, 3],
+  },
+  {
+    id: 27,
+    name: 'Randall Fox',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/78.jpg',
+    teamIds: [3],
+  },
+  {
+    id: 30,
+    name: 'Samson Zuniga',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/80.jpg',
+    teamIds: [3],
+  },
+  {
+    id: 31,
+    name: 'Adam Redmond',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/81.jpg',
+    teamIds: [3],
+  },
+  {
+    id: 32,
+    name: 'Stanislaw Mejia',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/82.jpg',
+    teamIds: [3],
+  },
+  {
+    id: 33,
+    name: 'Ayat Villa',
+    thumbnail: 'https://randomuser.me/api/portraits/thumb/men/83.jpg',
+    teamIds: [3],
+  },
+];
