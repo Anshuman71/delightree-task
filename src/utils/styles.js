@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {theme, deviceHeight} from './constants';
+import {theme} from './constants';
 
 const styles = StyleSheet.create({
   inputBox: {

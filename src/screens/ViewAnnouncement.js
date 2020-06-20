@@ -1,36 +1,22 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
-import {theme} from '../utils/constants';
 import ListItem from '../components/ListItem';
 import ExpandableGroup from '../components/ExpansionGroup';
 import Header from '../components/Header';
 
 const styles = StyleSheet.create({
-  selectedCount: {
-    fontSize: 14,
-    alignSelf: 'flex-end',
-    marginTop: 10,
-    marginBottom: 24,
-  },
-  button: {
-    width: '100%',
-    height: 60,
-    borderRadius: 5,
-    backgroundColor: theme.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  buttonText: {fontSize: 20, color: theme.background},
+  mainContainer: {flex: 1},
+  listContainer: {flex: 1, padding: 24, paddingBottom: 0},
 });
 
 function keyExtractor(item) {
   return `${item.id}${item.name}`;
 }
 
-function ViewAnnouncement({route, navigation}) {
-  const renderItem = ({item, index}) => {
-    const {teamMemberMap} = route.params;
+function ViewAnnouncement({route}) {
+  const {title, selectedCount, teamMap, teamMemberMap} = route.params;
+
+  const renderItem = ({item}) => {
     const members =
       item.members &&
       teamMemberMap[item.id] &&
@@ -58,21 +44,18 @@ function ViewAnnouncement({route, navigation}) {
       );
     }
     if (item.role) {
-      return <ListItem data={item} handleUpdate={() => null} />;
+      return <ListItem onlineIcon data={item} handleUpdate={() => null} />;
     }
     return null;
   };
 
   return (
-    <View style={{flex: 1}}>
-      <Header
-        title={route.params.title}
-        subtitle={`${route.params.selectedCount} members`}
-      />
-      <View style={{flex: 1, padding: 24, paddingBottom: 0}}>
+    <View style={styles.mainContainer}>
+      <Header title={title} subtitle={`${selectedCount} members`} />
+      <View style={styles.listContainer}>
         <FlatList
           keyExtractor={keyExtractor}
-          data={Object.values(route.params.teamMap)}
+          data={Object.values(teamMap)}
           renderItem={renderItem}
         />
       </View>

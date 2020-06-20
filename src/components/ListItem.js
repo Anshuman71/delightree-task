@@ -60,13 +60,28 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 2,
     bottom: 0,
-    width: 15,
-    height: 15,
+    borderWidth: 2,
+    borderRadius: 9,
+    borderColor: theme.background,
+    width: 18,
+    height: 18,
+  },
+  online: {
+    width: 12,
+    height: 12,
+    borderWidth: 2,
+    position: 'absolute',
+    right: 10,
+    bottom: 0,
+    borderRadius: 6,
+    borderColor: theme.background,
+    backgroundColor: theme.green,
   },
 });
 
-function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
+function ListItem({data, isGroup, onlineIcon, onExpand, isOpen, handleUpdate}) {
   const subtitle = data.role || `${data.members.length} Members`;
+
   return (
     <TouchableOpacity
       onPress={isGroup ? () => null : () => handleUpdate()}
@@ -79,12 +94,13 @@ function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
             uri: data.thumbnail,
           }}
         />
-        {data.selected && (
+        {data.selected && !onlineIcon && (
           <Image
             source={require('../assets/selected.png')}
             style={styles.selectedIcon}
           />
         )}
+        {data.selected && onlineIcon && <View style={styles.online} />}
       </View>
       <View style={styles.textContent}>
         <Text style={styles.title}>{data.name}</Text>

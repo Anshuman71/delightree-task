@@ -5,6 +5,8 @@ import {useNavigation} from '@react-navigation/native';
 import {theme, deviceWidth} from '../utils/constants';
 
 const styles = StyleSheet.create({
+  title: {fontSize: 20, fontWeight: '700', color: theme.background},
+  subtitle: {fontSize: 16, fontWeight: '500', color: theme.background},
   header: {
     height: 60,
     width: deviceWidth,
@@ -19,6 +21,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
   },
+  alignCenter: {alignItems: 'center'},
   icon: {
     width: 25,
     height: 25,
@@ -37,17 +40,9 @@ function Header({title, subtitle}) {
           source={require('../assets/chevron_left.png')}
         />
       </TouchableOpacity>
-      <View style={{alignItems: 'center'}}>
-        <Text
-          style={{fontSize: 20, fontWeight: '700', color: theme.background}}>
-          {title}
-        </Text>
-        {subtitle && (
-          <Text
-            style={{fontSize: 16, fontWeight: '500', color: theme.background}}>
-            {subtitle}
-          </Text>
-        )}
+      <View style={styles.alignCenter}>
+        <Text style={styles.title}>{title}</Text>
+        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
       <TouchableOpacity style={styles.button}>
         <Image style={styles.icon} source={require('../assets/more.png')} />

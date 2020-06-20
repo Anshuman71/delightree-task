@@ -7,6 +7,12 @@ import ListItem from './ListItem';
 
 const DEFAULT_HEIGHT = 60;
 
+const styles = StyleSheet.create({
+  children: {
+    paddingLeft: deviceWidth * 0.1 + 10,
+  },
+});
+
 function ExpandableGroup({children, main}) {
   const [expandedHeight, setExpandedHeight] = useState(DEFAULT_HEIGHT);
   const [minHeight, setMinHeight] = useState('auto');
@@ -36,12 +42,7 @@ function ExpandableGroup({children, main}) {
         isGroup
         isOpen={isOpen}
       />
-      <View
-        style={{
-          paddingLeft: deviceWidth * 0.1 + 10,
-        }}>
-        {children}
-      </View>
+      <View style={styles.children}>{children}</View>
     </View>
   );
 }

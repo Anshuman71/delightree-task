@@ -13,9 +13,10 @@ import commonStyles from '../utils/styles';
 import ListItem from '../components/ListItem';
 import ExpandableGroup from '../components/ExpansionGroup';
 import Header from '../components/Header';
-import {users, teams} from '../utils/source';
+import {users, teams} from '../utils/data';
 
 const styles = StyleSheet.create({
+  mainContainer: {flex: 1},
   selectedCount: {
     fontSize: 14,
     alignSelf: 'flex-end',
@@ -55,25 +56,25 @@ function CreateAnnouncement({route, navigation}) {
   const [selectedCount, setSelectedCount] = useState(0);
 
   const [filteredData, setFilteredData] = useState([]);
-  const [memberName, setMemberName] = useState('');
+  const [search, setSearch] = useState('');
   const [announcementName, setAnnouncementName] = useState('');
   const [canProceed, setProceed] = useState(false);
 
   useEffect(() => {
-    const tMap = {UNGROUPED: {}};
+    const teamMembers = {UNGROUPED: {}};
     const members = {};
     users.forEach(user => {
       const {teamIds} = user;
       if (teamIds) {
         teamIds.forEach(teamId => {
-          if (tMap[teamId]) {
-            tMap[teamId] = {...tMap[teamId], [user.id]: user};
+          if (teamMembers[teamId]) {
+            teamMembers[teamId] = {...teamMembers[teamId], [user.id]: user};
           } else {
-            tMap[teamId] = {[user.id]: user};
+            teamMembers[teamId] = {[user.id]: user};
           }
         });
       } else {
-        tMap.UNGROUPED = {...tMap.UNGROUPED, [user.id]: user};
+        teamMembers.UNGROUPED = {...teamMembers.UNGROUPED, [user.id]: user};
       }
 
       members[user.id] = user;
@@ -84,8 +85,7 @@ function CreateAnnouncement({route, navigation}) {
       map[team.id] = {...team};
     });
 
-    console.log({map, tMap});
-    setTeamMemberMap(tMap);
+    setTeamMemberMap(teamMembers);
     setTeamMap(map);
   }, []);
 
@@ -93,27 +93,27 @@ function CreateAnnouncement({route, navigation}) {
     setProceed(announcementName.length && selectedCount);
   }, [announcementName, selectedCount]);
 
-  function handleAnnouncementNameChange(val) {
-    setAnnouncementName(val);
-  }
+  const handleAnnouncementNameChange = value => {
+    setAnnouncementName(value);
+  };
 
-  const handleFilter = val => {
-    const query = val && val.toLowerCase();
+  const handleFilter = value => {
+    const query = value && value.toLowerCase();
     if (query) {
-      setMemberName(query);
+      setSearch(query);
       setFilteredData(
         users.filter(
           item => item.name && item.name.toLowerCase().includes(query),
         ),
       );
     } else {
-      setMemberName('');
+      setSearch('');
       setFilteredData([]);
     }
   };
 
   const onClear = () => {
-    setMemberName('');
+    setSearch('');
     setFilteredData([]);
   };
 
@@ -176,10 +176,8 @@ function CreateAnnouncement({route, navigation}) {
   };
 
   const renderUserItem = ({item: user}) => {
-    console.log('user', user);
     const {teamIds} = user;
     const member = teamMemberMap[teamIds ? teamIds[0] : 'UNGROUPED'][user.id];
-    console.log('member', member);
 
     return (
       <ListItem
@@ -212,7 +210,7 @@ function CreateAnnouncement({route, navigation}) {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.mainContainer}>
       <Header title={route.name} />
       <View style={styles.container}>
         <TextInput
@@ -225,11 +223,11 @@ function CreateAnnouncement({route, navigation}) {
           <TextInput
             placeholderTextColor={theme.grey}
             placeholder="Add people"
-            value={memberName}
+            value={search}
             onChangeText={handleFilter}
             style={{...commonStyles.inputBox}}
           />
-          {!!memberName && (
+          {!!search && (
             <TouchableOpacity onPress={onClear} style={styles.clearInput}>
               <Image
                 style={styles.clearIcon}
@@ -240,7 +238,7 @@ function CreateAnnouncement({route, navigation}) {
         </View>
         <Text style={styles.selectedCount}>{selectedCount}/1000</Text>
         <View style={styles.listContainer}>
-          {memberName ? (
+          {search ? (
             filteredData.length ? (
               <FlatList
                 keyExtractor={keyExtractor}
