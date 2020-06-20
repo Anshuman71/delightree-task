@@ -38,6 +38,7 @@ function keyExtractor(item) {
 
 function CreateAnnouncement() {
   const [data, setData] = useState([]);
+  // console.log('CreateAnnouncement -> data', data);
   const [filteredData, setFilteredData] = useState([]);
   const [announcementName, setAnnouncementName] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -81,7 +82,62 @@ function CreateAnnouncement() {
     }
   }
 
-  function renderItem({item}) {
+  const handleUpdate = ({index, value}) => {
+    if (value.members && value.members.length) {
+      return;
+    }
+
+    if (value.teamIds && value.teamIds.length) {
+      const map = {};
+      // let isSelected = null;
+
+      value.teamIds.forEach(teamId => {
+        // console.log('handleUpdate -> teamId', teamId);
+        const newTeamValue = {
+          ...data[teamId - 1],
+          members: data[teamId - 1].members.map(member => {
+            if (member.id === value.id) {
+              console.log('handleUpdate -> member', member);
+              console.log('handleUpdate -> member.selected', member.selected);
+
+              return {...member, selected: !member.selected};
+            }
+            return {...member};
+          }),
+        };
+        console.log('handleUpdate -> newTeamValue', newTeamValue);
+        map[teamId - 1] = newTeamValue;
+      });
+      // map.forEach(item => {
+      //   const [idx, group] = item;
+
+      //   setData([...data.slice(0, idx), group, ...data.slice(idx + 1)]);
+      // });
+      const mapKeys = Object.keys(map);
+      console.log('handleUpdate -> mapKeys', mapKeys);
+      let newDataValue = data.map((item, idx) => {
+        console.log('handleUpdate -> idx', idx);
+
+        if (mapKeys.includes(idx.toString())) {
+          console.log('handleUpdate -> map[idx]', map[idx]);
+          console.log('handleUpdate -> item', item);
+          return map[idx];
+        }
+
+        return item;
+      });
+
+      setData(newDataValue);
+      console.log('handleUpdate -> newDataValue', newDataValue);
+
+      return;
+    }
+
+    const newValue = {...value, selected: !value.selected};
+    setData([...data.slice(0, index), newValue, ...data.slice(index + 1)]);
+  };
+
+  function renderItem({item, index}) {
     if (item.members && item.members.length) {
       return (
         <ExpandableGroup main={item}>
@@ -93,8 +149,14 @@ function CreateAnnouncement() {
         </ExpandableGroup>
       );
     }
-    return <ListItem data={item} />;
+    return (
+      <ListItem
+        data={item}
+        handleUpdate={() => handleUpdate({index, value: item})}
+      />
+    );
   }
+
   return (
     <View style={{flex: 1, padding: 24, paddingBottom: 0}}>
       <TextInput

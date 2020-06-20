@@ -46,11 +46,13 @@ const styles = StyleSheet.create({
   },
 });
 
-function ListItem({data, isGroup, onExpand, isOpen}) {
-  console.log('ListItem -> isOpen', isOpen, data.name);
+function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
+  // console.log('ListItem -> isOpen', isOpen, data.name);
   const subtitle = data.role || `${data.members.length} Members`;
   return (
-    <TouchableOpacity style={styles.listItem}>
+    <TouchableOpacity
+      onPress={isGroup ? () => null : handleUpdate}
+      style={styles.listItem}>
       <Image
         style={styles.avatar}
         source={{
@@ -59,7 +61,9 @@ function ListItem({data, isGroup, onExpand, isOpen}) {
       />
       <View style={styles.textContent}>
         <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <Text style={styles.subtitle}>
+          {subtitle} {`${data.selected ? 'SELECTED' : ''}`}
+        </Text>
       </View>
       {isGroup && (
         <TouchableOpacity
