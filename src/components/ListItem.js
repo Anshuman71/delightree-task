@@ -39,6 +39,18 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     borderBottomColor: theme.primary,
   },
+  upArrow: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 8,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: theme.primary,
+  },
   arrowButton: {
     width: '100%',
     height: 60,
@@ -47,7 +59,6 @@ const styles = StyleSheet.create({
 });
 
 function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
-  // console.log('ListItem -> isOpen', isOpen, data.name);
   const subtitle = data.role || `${data.members.length} Members`;
   return (
     <TouchableOpacity
@@ -71,12 +82,7 @@ function ListItem({data, isGroup, onExpand, isOpen, handleUpdate}) {
           activeOpacity={0.5}
           onPress={onExpand}
           style={styles.arrowButton}>
-          <View
-            style={{
-              ...styles.downArrow,
-              transform: isOpen ? [{rotate: '180deg'}] : [{rotate: '360deg'}],
-            }}
-          />
+          <View style={isOpen ? styles.downArrow : styles.upArrow} />
         </TouchableOpacity>
       )}
     </TouchableOpacity>
