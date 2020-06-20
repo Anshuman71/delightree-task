@@ -37,7 +37,7 @@ function keyExtractor(item) {
   return `${item.id}${item.name}`;
 }
 
-function CreateAnnouncement({route}) {
+function CreateAnnouncement({route, navigation}) {
   const [data, setData] = useState([]);
   // console.log('CreateAnnouncement -> data', data);
   const [filteredData, setFilteredData] = useState([]);
@@ -171,7 +171,15 @@ function CreateAnnouncement({route}) {
           data={filteredData.length ? filteredData : data}
           renderItem={renderItem}
         />
-        <TouchableOpacity activeOpacity={0.8} style={styles.button}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ViewTask', {
+              title: announcementName,
+              data: data,
+            })
+          }
+          activeOpacity={0.8}
+          style={styles.button}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </View>
