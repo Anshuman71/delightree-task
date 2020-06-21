@@ -10,30 +10,23 @@ const DEFAULT_HEIGHT = 60;
 const styles = StyleSheet.create({
   children: {
     paddingLeft: deviceWidth * 0.1 + 10,
+    paddingBottom: 20,
   },
 });
 
 function ExpandableGroup({children, main}) {
-  const [expandedHeight, setExpandedHeight] = useState(DEFAULT_HEIGHT);
-  const [minHeight, setMinHeight] = useState('auto');
+  const [minHeight, setMinHeight] = useState(DEFAULT_HEIGHT);
   const [isOpen, setIsOpen] = useState(0);
-  const onLayout = useCallback(
-    event => {
-      const newHeight = event.nativeEvent.layout.height;
-      if (newHeight > DEFAULT_HEIGHT && newHeight !== expandedHeight) {
-        setExpandedHeight(newHeight);
-        setMinHeight(DEFAULT_HEIGHT);
-        setIsOpen(0);
-      }
-    },
-    [expandedHeight],
-  );
+
+  const onSublistLayout = useCallback(event => {
+    const newHeight = event.nativeEvent.layout.height;
+    setMinHeight(newHeight);
+  }, []);
 
   return (
     <View
-      onLayout={onLayout}
       style={{
-        height: isOpen ? expandedHeight : minHeight,
+        height: isOpen ? minHeight + DEFAULT_HEIGHT : DEFAULT_HEIGHT,
         overflow: 'hidden',
       }}>
       <ListItem
@@ -42,7 +35,9 @@ function ExpandableGroup({children, main}) {
         isGroup
         isOpen={isOpen}
       />
-      <View style={styles.children}>{children}</View>
+      <View onLayout={onSublistLayout} style={styles.children}>
+        {children}
+      </View>
     </View>
   );
 }
